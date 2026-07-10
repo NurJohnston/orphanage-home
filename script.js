@@ -14,7 +14,7 @@ const botReplies = [
       "Thank you for wanting to help. You can support Hopeful Hearts with financial donations, food, clothing, school supplies, books, or by sponsoring daily care needs. Please contact hello@hopefulhearts.org to arrange a donation.",
   },
   {
-    keywords: ["volunteer", "help", "mentor", "tutor", "time"],
+    keywords: ["volunteer", "help", "mentor", "tutor", "time", "assist"],
     reply:
       "We welcome caring volunteers for tutoring, mentoring, activities, admin support, and donation drives. Send your availability and area of interest to hello@hopefulhearts.org so the team can guide you through the next steps.",
   },
