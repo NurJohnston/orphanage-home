@@ -390,14 +390,121 @@ a { text-decoration: none; color: inherit; }
   gap: 8px;
 }
 
+/* Tickets Section */
+.tickets-section {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 64px 24px;
+  border-top: 1px solid #f1f5f9;
+}
+.tickets-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+.tickets-header h2 {
+  font-size: 2.2rem;
+  color: #0f172a;
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+.tickets-header p {
+  font-size: 1.05rem;
+  color: #64748b;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.tickets-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 40px;
+  align-items: start;
+}
+.ticket-form-card, .ticket-list-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+}
+.ticket-list-card h3 {
+  font-size: 1.2rem;
+  color: #0f172a;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.ticket-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+.ticket-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  position: relative;
+  animation: slideIn 0.3s ease;
+}
+.ticket-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 6px;
+}
+.ticket-subject {
+  font-weight: 600;
+  color: #0f172a;
+  font-size: 0.95rem;
+}
+.ticket-status {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #ffe8d6;
+  color: #d97706;
+}
+.ticket-status.read {
+  background: #dcfce7;
+  color: #15803d;
+}
+.ticket-time {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  display: block;
+  margin-bottom: 8px;
+}
+.ticket-message {
+  font-size: 0.88rem;
+  color: #475569;
+  line-height: 1.45;
+  white-space: pre-wrap;
+}
+.ticket-empty {
+  text-align: center;
+  color: #94a3b8;
+  padding: 40px 0;
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .site-nav { display: none; }
   .hero { grid-template-columns: 1fr; padding: 40px 24px 64px; gap: 40px; }
   .hero-text h1 { font-size: 2.2rem; }
   .mission-grid { grid-template-columns: 1fr; }
+  .tickets-grid { grid-template-columns: 1fr; gap: 32px; }
   .chatbot { right: 16px; bottom: 16px; }
   .chatbot-panel { bottom: 72px; height: min(560px, calc(100vh - 104px)); }
   .chatbot-prompts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .footer-inner { grid-template-columns: 1fr; gap: 24px; }
 }
+

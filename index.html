@@ -69,6 +69,56 @@
     </div>
   </section>
 
+  <!-- === SUPPORT TICKETS & MESSAGES SECTION === -->
+  <section class="tickets-section" id="tickets">
+    <div class="tickets-header">
+      <span class="tag">Support &amp; Feedback</span>
+      <h2>Submit a Support Ticket</h2>
+      <p>Have a question, feedback, or need help? Send us a ticket and track its status in real-time below.</p>
+    </div>
+    
+    <div class="tickets-grid">
+      <!-- Submission Form -->
+      <div class="ticket-form-card">
+        <form id="ticketForm">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="tkName" style="display:block; font-weight:600; margin-bottom:4px; font-size:0.9rem;">Your Name</label>
+              <input type="text" id="tkName" placeholder="Your name" style="width:100%; padding:10px 12px; border:1px solid #cbd5e1; border-radius:8px;" required />
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="tkEmail" style="display:block; font-weight:600; margin-bottom:4px; font-size:0.9rem;">Email Address</label>
+              <input type="email" id="tkEmail" placeholder="you@example.com" style="width:100%; padding:10px 12px; border:1px solid #cbd5e1; border-radius:8px;" required />
+            </div>
+          </div>
+          
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label for="tkSubject" style="display:block; font-weight:600; margin-bottom:4px; font-size:0.9rem;">Subject</label>
+            <input type="text" id="tkSubject" placeholder="Brief summary" style="width:100%; padding:10px 12px; border:1px solid #cbd5e1; border-radius:8px;" required />
+          </div>
+          
+          <div class="form-group" style="margin-bottom: 20px;">
+            <label for="tkMessage" style="display:block; font-weight:600; margin-bottom:4px; font-size:0.9rem;">Detailed Message</label>
+            <textarea id="tkMessage" rows="4" placeholder="How can we help you?" style="width:100%; padding:10px 12px; border:1px solid #cbd5e1; border-radius:8px; font-family:inherit;" required></textarea>
+          </div>
+          
+          <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; border-radius: 8px; border: none;">Submit Ticket</button>
+        </form>
+      </div>
+      
+      <!-- Live Real-Time Feed -->
+      <div class="ticket-list-card">
+        <h3>
+          <span>Your Sent Tickets</span>
+          <span style="font-size: 0.8rem; font-weight: normal; color: #f97316; background: #fff7ed; padding: 2px 8px; border-radius: 999px;">Live Update</span>
+        </h3>
+        <div class="ticket-list-container" id="ticketListContainer">
+          <div class="ticket-empty">No tickets submitted in this session yet.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <aside class="chatbot" aria-label="Hopeful Hearts chat assistant">
     <button class="chatbot-toggle" type="button" aria-label="Open chat" aria-expanded="false" aria-controls="chatbot-panel">
       <svg class="chatbot-icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -154,10 +204,155 @@
     const logoutBtn = document.getElementById('logoutBtn')
     const donateBtn = document.getElementById('donateBtn')
     const dashboardLink = document.getElementById('dashboardLink')
+    let currentUser = null
+
+    // Simple HTML escape helper
+    function esc(str) {
+      if (!str) return '';
+      return str.replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+    }
+
+    // Time-ago formatting helper
+    function timeAgo(dateString) {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffMs = now - date;
+      
+      if (diffMs < 0) return "Just now";
+      
+      const diffSec = Math.floor(diffMs / 1000);
+      if (diffSec < 10) return "Just now";
+      if (diffSec < 60) return `${diffSec}s ago`;
+      
+      const diffMin = Math.floor(diffSec / 60);
+      if (diffMin < 60) return `${diffMin}m ago`;
+      
+      const diffHour = Math.floor(diffMin / 60);
+      if (diffHour < 24) return `${diffHour}h ago`;
+      
+      return date.toLocaleDateString() + " " + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    // Render Tickets in Real-Time
+    function renderTickets() {
+      const container = document.getElementById('ticketListContainer');
+      if (!container) return;
+      
+      const messagesList = JSON.parse(localStorage.getItem('hh_messages') || '[]');
+      const userEmail = currentUser?.email || '';
+      const sessionIds = JSON.parse(sessionStorage.getItem('hh_session_ticket_ids') || '[]');
+      
+      const filtered = messagesList.filter(msg => {
+        const belongsToUser = userEmail && msg.email && msg.email.toLowerCase() === userEmail.toLowerCase();
+        const submittedInSession = sessionIds.includes(msg.id);
+        return belongsToUser || submittedInSession;
+      });
+      
+      filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+      
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="ticket-empty">No tickets submitted in this session yet.</div>`;
+        return;
+      }
+      
+      container.innerHTML = filtered.map(t => {
+        const dateObj = new Date(t.date);
+        const timeStr = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        return `
+          <div class="ticket-card">
+            <div class="ticket-card-header">
+              <span class="ticket-subject">${esc(t.subject)}</span>
+              <span class="ticket-status ${t.status === 'read' ? 'read' : ''}">${t.status === 'read' ? 'Reviewed' : 'Sent'}</span>
+            </div>
+            <span class="ticket-time" data-date="${t.date}">Sent: Just now (${timeStr})</span>
+            <p class="ticket-message">${esc(t.message)}</p>
+          </div>
+        `;
+      }).join('');
+      
+      updateRelativeTimes();
+    }
+
+    // Update time displays dynamically in real-time
+    function updateRelativeTimes() {
+      const timeEls = document.querySelectorAll('.ticket-time');
+      timeEls.forEach(el => {
+        const dateStr = el.getAttribute('data-date');
+        if (!dateStr) return;
+        
+        const date = new Date(dateStr);
+        const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        el.textContent = `Sent: ${timeAgo(dateStr)} (${timeStr})`;
+      });
+    }
+
+    // Set up form submission handler
+    function setupTicketForm() {
+      const form = document.getElementById('ticketForm');
+      if (!form) return;
+      
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const nameVal = document.getElementById('tkName').value.trim();
+        const emailVal = document.getElementById('tkEmail').value.trim();
+        const subjectVal = document.getElementById('tkSubject').value.trim();
+        const messageVal = document.getElementById('tkMessage').value.trim();
+        
+        const messagesList = JSON.parse(localStorage.getItem('hh_messages') || '[]');
+        
+        // Find next numeric ID
+        const ticketId = Date.now() + Math.floor(Math.random() * 1000); // Unique safety
+        
+        const newTicket = {
+          id: ticketId,
+          name: nameVal,
+          email: emailVal,
+          subject: subjectVal,
+          message: messageVal,
+          date: new Date().toISOString(),
+          status: 'unread'
+        };
+        
+        // Push to localStorage
+        messagesList.push(newTicket);
+        localStorage.setItem('hh_messages', JSON.stringify(messagesList));
+        
+        // Add also to dashboard activity & notifications if logged in/local storage allows
+        const activityLog = JSON.parse(localStorage.getItem('hh_activity') || '[]');
+        activityLog.unshift({ icon: 'fa-envelope', text: `New support ticket: ${subjectVal} from ${nameVal}`, time: new Date().toLocaleString() });
+        localStorage.setItem('hh_activity', JSON.stringify(activityLog.slice(0, 20)));
+
+        const notifs = JSON.parse(localStorage.getItem('hh_notifs') || '[]');
+        notifs.unshift({ icon: 'fa-envelope', text: `New ticket: ${nameVal}`, time: new Date().toLocaleString() });
+        localStorage.setItem('hh_notifs', JSON.stringify(notifs));
+        
+        // Store ticket ID in session storage to track in live list
+        const sessionIds = JSON.parse(sessionStorage.getItem('hh_session_ticket_ids') || '[]');
+        sessionIds.push(ticketId);
+        sessionStorage.setItem('hh_session_ticket_ids', JSON.stringify(sessionIds));
+        
+        // Reset form (keeping read-only fields)
+        document.getElementById('tkSubject').value = '';
+        document.getElementById('tkMessage').value = '';
+        
+        alert('Ticket submitted successfully! You can track its status in the real-time panel.');
+        
+        renderTickets();
+      });
+    }
 
     async function checkUser() {
       const { data: { user } } = await supabase.auth.getUser()
+      currentUser = user
       
+      const tkNameInput = document.getElementById('tkName');
+      const tkEmailInput = document.getElementById('tkEmail');
+
       if (user) {
         authButtons.style.display = 'none'
         userMenu.style.display = 'flex'
@@ -176,6 +371,14 @@
         
         donateBtn.href = 'donate.html'
         donateBtn.onclick = null
+
+        // Auto-fill forms
+        if (tkNameInput && tkEmailInput) {
+          tkNameInput.value = profile?.display_name || user.email.split('@')[0];
+          tkEmailInput.value = user.email;
+          tkNameInput.readOnly = true;
+          tkEmailInput.readOnly = true;
+        }
       } else {
         authButtons.style.display = 'flex'
         userMenu.style.display = 'none'
@@ -190,7 +393,16 @@
             window.location.href = 'login.html?return=donate.html'
           }
         }
+
+        if (tkNameInput && tkEmailInput) {
+          tkNameInput.value = '';
+          tkEmailInput.value = '';
+          tkNameInput.readOnly = false;
+          tkEmailInput.readOnly = false;
+        }
       }
+
+      renderTickets();
     }
 
     logoutBtn.addEventListener('click', async () => {
@@ -198,10 +410,14 @@
       window.location.reload()
     })
 
-    checkUser()
+    // Setup interval for live relative times (every 5 seconds)
+    setInterval(updateRelativeTimes, 5000);
+
+    setupTicketForm();
+    checkUser();
 
     supabase.auth.onAuthStateChange(() => {
-      checkUser()
+      checkUser();
     })
   </script>
   <script src="script.js"></script>
