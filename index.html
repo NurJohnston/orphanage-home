@@ -10,16 +10,17 @@
 <body>
   <header class="site-header">
     <div class="brand">
+      <button class="hamburger-menu-toggle" id="hamburgerToggleBtn" aria-label="Toggle Navigation" style="margin-right: 8px;">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
       <img src="logo.png" alt="Hopeful Hearts logo" class="brand-logo" />
       <span class="brand-name">Hopeful Hearts Orphanage</span>
     </div>
     <nav class="site-nav">
       <a href="#about">About</a>
       <a href="#mission">Mission</a>
-      <a href="#volunteer" id="volunteerNavLink" style="display:none;">Volunteer</a>
-      <a href="tour.html">Virtual Tour</a>
-      <a href="impact.html">Impact Map</a>
-      <a href="events.html">Events</a>
       <a href="#contact">Contact</a>
       <a href="admin/admin.html" id="dashboardLink" style="display:none;">Dashboard</a>
     </nav>
@@ -33,6 +34,19 @@
       <button id="logoutBtn" class="btn btn-outline" style="padding:6px 14px; font-size:0.85rem; cursor:pointer;">Logout</button>
     </div>
   </header>
+  <div class="hamburger-backdrop" id="hamburgerBackdrop"></div>
+  <div class="hamburger-drawer" id="hamburgerDrawer">
+    <div class="drawer-header" style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #f1f5f9; padding-bottom:12px; margin-bottom:12px;">
+      <h3 style="margin:0; font-size:1.1rem; color:#0f172a; font-weight:700;">Explore</h3>
+      <button id="hamburgerCloseBtn" style="background:none; border:none; font-size:1.6rem; cursor:pointer; color:#94a3b8; line-height:1;">&times;</button>
+    </div>
+    <nav class="drawer-nav">
+      <a href="#volunteer" id="volunteerNavLink" style="display:none;">Volunteer</a>
+      <a href="tour.html">Virtual Tour</a>
+      <a href="impact.html">Impact Map</a>
+      <a href="events.html">Events</a>
+    </nav>
+  </div>
 
   <main class="hero" id="about">
     <div class="hero-text">

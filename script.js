@@ -127,3 +127,41 @@ addMessage(
   "Hi, I am the Hopeful Hearts assistant. Ask me about donating, volunteering, visits, or our mission.",
   "bot"
 );
+
+// Global Hamburger Menu Toggle Logic
+document.addEventListener('DOMContentLoaded', () => {
+  const toggleBtn = document.getElementById('hamburgerToggleBtn');
+  const drawer = document.getElementById('hamburgerDrawer');
+  const closeBtn = document.getElementById('hamburgerCloseBtn');
+  const backdrop = document.getElementById('hamburgerBackdrop');
+  
+  if (toggleBtn && drawer && backdrop) {
+    function openMenu() {
+      toggleBtn.classList.add('open');
+      drawer.classList.add('open');
+      backdrop.classList.add('visible');
+    }
+    
+    function closeMenu() {
+      toggleBtn.classList.remove('open');
+      drawer.classList.remove('open');
+      backdrop.classList.remove('visible');
+    }
+    
+    toggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = drawer.classList.contains('open');
+      if (isOpen) closeMenu();
+      else openMenu();
+    });
+    
+    if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+    backdrop.addEventListener('click', closeMenu);
+    
+    // Close menu when navigation links are clicked
+    const links = drawer.querySelectorAll('.drawer-nav a');
+    links.forEach(link => {
+      link.addEventListener('click', closeMenu);
+    });
+  }
+});
