@@ -79,7 +79,7 @@ async function loadDonations() {
 
     if (donations.length === 0) {
       supporterTimeline.innerHTML = "<div class='loading-timeline'>No donations recorded yet. Be the first to donate!</div>";
-      statTotalDonations.textContent = "$0.00";
+      statTotalDonations.textContent = "R0.00";
       statSupporterCount.textContent = "0";
       statCountriesCount.textContent = "0";
       return;
@@ -124,7 +124,7 @@ async function loadDonations() {
     });
 
     // 2. Update Stats Counter Cards
-    statTotalDonations.textContent = `$${totalSum.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    statTotalDonations.textContent = `R${totalSum.toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     statSupporterCount.textContent = uniqueSupporters.size;
     statCountriesCount.textContent = uniqueCities.size;
 
@@ -142,7 +142,7 @@ async function loadDonations() {
         <div class="timeline-content">
           <div class="timeline-header">
             <span class="timeline-donor">${item.name}</span>
-            <span class="timeline-amount">$${item.amount.toFixed(2)}</span>
+            <span class="timeline-amount">R${item.amount.toFixed(2)}</span>
           </div>
           <span class="timeline-location">📍 ${item.location} • ${item.date.toLocaleDateString()}</span>
           ${item.message ? `<p class="timeline-message">"${item.message}"</p>` : ''}
@@ -183,7 +183,7 @@ async function loadDonations() {
       let popupContent = `
         <h4>📍 ${group.name}</h4>
         <p><strong>${count}</strong> supporter(s) helped from this location.</p>
-        <p>Total Raised: <strong>$${totalLocAmount.toFixed(2)}</strong></p>
+        <p>Total Raised: <strong>R${totalLocAmount.toFixed(2)}</strong></p>
         <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 8px 0;" />
         <div style="max-height: 120px; overflow-y: auto; padding-right: 4px;">
       `;
@@ -193,7 +193,7 @@ async function loadDonations() {
           <div style="font-size: 0.8rem; margin-bottom: 6px; border-bottom: 1px dashed #f1f5f9; padding-bottom: 4px;">
             <div style="display:flex; justify-content:space-between; font-weight:600;">
               <span>${don.name}</span>
-              <span style="color:#ea580c">$${don.amount.toFixed(2)}</span>
+              <span style="color:#ea580c">R${don.amount.toFixed(2)}</span>
             </div>
             <div style="color:#64748b; font-style:italic; margin-top:2px;">"${don.message}"</div>
           </div>

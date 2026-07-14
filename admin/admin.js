@@ -1330,6 +1330,54 @@ document.addEventListener('DOMContentLoaded', () => {
   Notifs.updateDot();
   Notifs.render();
 
+  // Real-time cross-tab alerts for support tickets
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'hh_messages') {
+      Messages.render();
+      Stats.update();
+      
+      const list = JSON.parse(e.newValue || '[]');
+      const oldList = JSON.parse(e.oldValue || '[]');
+      if (list.length > oldList.length) {
+        const newMsg = list[list.length - 1];
+        
+        // Show Toast
+        Toast.show(`New Ticket: "${newMsg.subject}" from ${newMsg.name}`, 'info');
+        
+        // Refresh dropdown notifications & activity
+        Activity.render();
+        Notifs.updateDot();
+        Notifs.render();
+        
+        // Play audio alert
+        playNotificationSound();
+      }
+    }
+  });
+
+  function playNotificationSound() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+      osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.12); // E5
+      
+      gain.gain.setValueAtTime(0.12, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+      
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      
+      osc.start();
+      osc.stop(ctx.currentTime + 0.45);
+    } catch (err) {
+      console.warn("Audio chime failed:", err);
+    }
+  }
+
   // Seed demo data only if NO local non-donation data exists
   // (Donations now come from DB so we skip seeding those)
   const hasAnyData = Store.get('hh_volunteers',[]).length ||
