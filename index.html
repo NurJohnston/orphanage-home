@@ -10,15 +10,18 @@
 <body>
   <header class="site-header">
     <div class="brand">
+      <button class="hamburger-menu-toggle" id="hamburgerToggleBtn" aria-label="Toggle Navigation" style="margin-right: 8px;">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
       <img src="logo.png" alt="Hopeful Hearts logo" class="brand-logo" />
       <span class="brand-name">Hopeful Hearts Orphanage</span>
     </div>
     <nav class="site-nav">
-      <a href="index.html#about">About</a>
-      <a href="index.html#mission">Mission</a>
-      <a href="tour.html">Virtual Tour</a>
-      <a href="impact.html">Impact Map</a>
-      <a href="events.html">Events</a>
+      <a href="#about">About</a>
+      <a href="#mission">Mission</a>
+      <a href="#contact">Contact</a>
       <a href="admin/admin.html" id="dashboardLink" style="display:none;">Dashboard</a>
     </nav>
     <div id="authButtons">
@@ -31,6 +34,19 @@
       <button id="logoutBtn" class="btn btn-outline" style="padding:6px 14px; font-size:0.85rem; cursor:pointer;">Logout</button>
     </div>
   </header>
+  <div class="hamburger-backdrop" id="hamburgerBackdrop"></div>
+  <div class="hamburger-drawer" id="hamburgerDrawer">
+    <div class="drawer-header" style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #f1f5f9; padding-bottom:12px; margin-bottom:12px;">
+      <h3 style="margin:0; font-size:1.1rem; color:#0f172a; font-weight:700;">Explore</h3>
+      <button id="hamburgerCloseBtn" style="background:none; border:none; font-size:1.6rem; cursor:pointer; color:#94a3b8; line-height:1;">&times;</button>
+    </div>
+    <nav class="drawer-nav">
+      <a href="#volunteer" id="volunteerNavLink" style="display:none;">Volunteer</a>
+      <a href="tour.html">Virtual Tour</a>
+      <a href="impact.html">Impact Map</a>
+      <a href="events.html">Events</a>
+    </nav>
+  </div>
 
   <main class="hero" id="about">
     <div class="hero-text">
@@ -68,6 +84,35 @@
     </div>
   </section>
 
+   <section class="volunteer" id="volunteer" style="display:none;">
+  <div class="volunteer-inner">
+    <div class="volunteer-text">
+      <span class="tag tag-grove">Give your time</span>
+      <h2>Volunteering changes more than a schedule.</h2>
+      <blockquote class="volunteer-quote">
+        <p>“The cause of making the world a better place for children unites us all.”</p>
+        — Liam Neeson
+      </blockquote>
+      <p>
+        Join our team of dedicated volunteers and help us create a brighter future for
+        children in need. Whether you can offer your time, skills, or resources, every
+        contribution makes a difference.
+      </p>
+      <a href="volunteer.html" class="btn btn-grove" id="volunteerBtn">Become a Volunteer</a>
+    </div>
+
+    <!-- <div class="volunteer-impact">
+      <svg class="volunteer-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 21s-7.5-4.6-10-9.3C.5 8.2 2.3 4.8 5.6 4.2c2-.4 3.9.5 5 2.1 1.1-1.6 3-2.5 5-2.1 3.3.6 5.1 4 3.6 7.5C19.5 16.4 12 21 12 21Z" />
+      </svg>
+      <ul class="impact-stats">
+        <li><strong>60+</strong><span>Active volunteers</span></li>
+        <li><strong>300+</strong><span>Hours given monthly</span></li>
+        <li><strong>8</strong><span>Ongoing programs</span></li>
+      </ul>
+    </div> -->
+  </div>
+</section>
 
 
   <aside class="chatbot" aria-label="Hopeful Hearts chat assistant">
@@ -138,6 +183,11 @@
     </div>
   </footer>
 
+    <div id="volunteerToast" style="display:none; position:fixed; bottom:32px; left:50%; transform:translateX(-50%); background:#fff; border:1px solid #fed7aa; border-radius:12px; padding:16px 24px; box-shadow:0 8px 24px rgba(0,0,0,0.12); z-index:100; text-align:center; min-width:260px;">
+    <p style="font-weight:600; color:#0f172a; margin-bottom:4px;">🧡 Thank you!</p>
+    <p style="color:#64748b; font-size:0.9rem;">We will get back to you soon.</p>
+  </div>
+
   <script type="importmap">
     {
       "imports": {
@@ -159,6 +209,16 @@
     const logoutBtn = document.getElementById('logoutBtn')
     const donateBtn = document.getElementById('donateBtn')
     const dashboardLink = document.getElementById('dashboardLink')
+    const volunteerSection = document.getElementById('volunteer')
+    const volunteerNavLink = document.getElementById('volunteerNavLink')
+    const volunteerBtn = document.getElementById('volunteerBtn')
+    const volunteerToast = document.getElementById('volunteerToast')
+
+    volunteerBtn.addEventListener('click', (e) => {
+      e.preventDefault()
+      volunteerToast.style.display = 'block'
+      setTimeout(() => { volunteerToast.style.display = 'none' }, 4000)
+    })
 
     async function checkUser() {
       const { data: { user } } = await supabase.auth.getUser()
@@ -184,6 +244,8 @@
         
         donateBtn.href = 'donate.html'
         donateBtn.onclick = null
+        volunteerSection.style.display = 'block'
+        volunteerNavLink.style.display = 'inline'
       } else {
         authButtons.style.display = 'flex'
         userMenu.style.display = 'none'
@@ -200,6 +262,8 @@
             window.location.href = 'login.html?return=donate.html'
           }
         }
+        volunteerSection.style.display = 'none'
+        volunteerNavLink.style.display = 'none'
       }
     }
 
