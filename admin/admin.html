@@ -16,7 +16,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <!-- jsPDF for PDF export -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <!-- HTML5 QRCode -->
+    <!-- EmailJS (browser SDK — keys loaded at runtime via Netlify Function) -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <!-- HTML5 QRCode -->
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
   <!-- Dashboard CSS -->
   <link rel="stylesheet" href="admin.css" />
@@ -406,7 +408,7 @@
   </div>
 
   <!-- Dashboard JS -->
-  <script type="module" src="admin.js?v=6"></script>
+  <script type="module" src="admin.js?v=7"></script>
 
   <!-- Supabase Auth Guard + Admin Session -->
   <script type="module">

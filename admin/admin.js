@@ -8,20 +8,25 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 import { EMAILJS_CONFIG } from './emailjs-config.js';
 
+let _ejsConfig = null;
+async function getEmailJSConfig() {
+  if (_ejsConfig) return _ejsConfig;
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return null;
+  const res = await fetch(EMAILJS_CONFIG.configUrl);
+  if (!res.ok) throw new Error('Could not load email config');
+  _ejsConfig = await res.json();
+  emailjs.init(_ejsConfig.publicKey);
+  return _ejsConfig;
+}
+
 async function sendEmail(templateType, templateParams) {
-  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    console.info('sendEmail skipped: Netlify Functions not available locally.');
-    return;
-  }
-  const res = await fetch(EMAILJS_CONFIG.functionUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ templateType, templateParams })
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ error: res.statusText }));
-    throw new Error(err.error || res.statusText);
-  }
+  const cfg = await getEmailJSConfig();
+  if (!cfg) { console.info('sendEmail skipped: not available locally.'); return; }
+  const templateId = cfg.templates[templateType];
+  if (!templateId) throw new Error('Unknown template: ' + templateType);
+  const result = await emailjs.send(cfg.serviceId, templateId, templateParams);
+  if (result.status !== 200) throw new Error(result.text);
+}
 }
 
 

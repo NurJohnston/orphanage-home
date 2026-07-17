@@ -1,4 +1,4 @@
-// No secrets here — email is sent server-side via Netlify Function
+// No secrets here — keys are fetched at runtime from the Netlify Function
 export const EMAILJS_CONFIG = {
-  functionUrl: '/.netlify/functions/send-email'
+  configUrl: '/.netlify/functions/emailjs-config'
 };
