@@ -9,6 +9,10 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 import { EMAILJS_CONFIG } from './emailjs-config.js';
 
 async function sendEmail(templateType, templateParams) {
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    console.info('sendEmail skipped: Netlify Functions not available locally.');
+    return;
+  }
   const res = await fetch(EMAILJS_CONFIG.functionUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -19,6 +23,7 @@ async function sendEmail(templateType, templateParams) {
     throw new Error(err.error || res.statusText);
   }
 }
+
 
 const _supabaseUrl  = 'https://irzqdsxdiifosqzqdypj.supabase.co';
 const _supabaseKey  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlyenFkc3hkaWlmb3NxenFkeXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM0MTgwMjYsImV4cCI6MjA5ODk5NDAyNn0.2mzC2WjiVIN2imGfKh0aKhdP97PCT6eLsTxOS4lfbh0';
